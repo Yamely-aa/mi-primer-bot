@@ -9,7 +9,6 @@ bot = telebot.TeleBot(TOKEN)
 
 app = Flask(__name__)
 
-# Ruta donde Telegram enviará los mensajes
 @app.route('/' + TOKEN, methods=['POST'])
 def getMessage():
     json_string = request.get_data().decode('utf-8')
@@ -17,7 +16,6 @@ def getMessage():
     bot.process_new_updates([update])
     return "!", 200
 
-# Ruta principal
 @app.route("/")
 def webhook():
     bot.remove_webhook()
@@ -36,4 +34,4 @@ def echo_all(message):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
