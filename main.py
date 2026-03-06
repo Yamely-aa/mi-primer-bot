@@ -6,10 +6,9 @@ TOKEN = os.getenv("TOKEN")
 URL_APP = os.getenv("URL_APP")
 
 bot = telebot.TeleBot(TOKEN)
-
 app = Flask(__name__)
 
-# Telegram enviará aquí los mensajes
+# Telegram enviará los mensajes aquí
 @app.route('/' + TOKEN, methods=['POST'])
 def getMessage():
     update = telebot.types.Update.de_json(request.stream.read().decode("utf-8"))
@@ -17,12 +16,9 @@ def getMessage():
     return "ok", 200
 
 
-# Ruta principal para configurar webhook
 @app.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url=URL_APP + "/" + TOKEN)
-    return "Bot funcionando", 200
+def index():
+    return "Bot activo", 200
 
 
 @bot.message_handler(commands=['start'])
@@ -33,6 +29,11 @@ def start(message):
 @bot.message_handler(func=lambda message: True)
 def echo(message):
     bot.send_message(message.chat.id, "Escribiste: " + message.text)
+
+
+# Registrar webhook al iniciar
+bot.remove_webhook()
+bot.set_webhook(url=URL_APP + "/" + TOKEN)
 
 
 if __name__ == "__main__":
