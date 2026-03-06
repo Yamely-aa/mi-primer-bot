@@ -3,11 +3,13 @@ from flask import Flask, request
 import telebot
 
 TOKEN = os.getenv("TOKEN")
+URL_APP = os.getenv("URL_APP")
 
 bot = telebot.TeleBot(TOKEN)
 
 app = Flask(__name__)
 
+# Ruta donde Telegram enviará los mensajes
 @app.route('/' + TOKEN, methods=['POST'])
 def getMessage():
     json_string = request.get_data().decode('utf-8')
@@ -15,16 +17,17 @@ def getMessage():
     bot.process_new_updates([update])
     return "!", 200
 
+# Ruta principal
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url="URL_AQUI" + TOKEN)
+    bot.set_webhook(url=URL_APP + "/" + TOKEN)
     return "Bot funcionando", 200
 
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "Hola! Soy tu primer bot en Python")
+    bot.reply_to(message, "Hola! Soy tu primer bot en Python 🤖")
 
 
 @bot.message_handler(func=lambda message: True)
